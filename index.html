@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<style>
+
+
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:white;
+overflow-x:hidden;
+color:white;
+}
+
+/* HEADER BAR */
+
+.header{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:90px;
+background:#f6d6cc; /* same tone as your logo background */
+display:flex;
+align-items:center;
+justify-content:center;
+padding:0 20px;
+box-sizing:border-box;
+z-index:20;
+}
+
+/* logo inside header */
+
+.headerLogo{
+height:80px;
+}
+
+
+  
+/* 3D viewer */
+
+model-viewer{
+width:100%;
+height:30vh;
+margin-top:170px;
+background:white;
+}
+
+/* logo */
+
+.logo{
+position:absolute;
+top:15px;
+right:15px;
+width:65px;
+z-index:10;
+}
+
+  
+/* menu container */
+
+.menu{
+position:absolute;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+text-align:center;
+width:90%;
+max-width:350px;
+}
+
+/* navigation row */
+
+.nav{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+margin-bottom:35px;
+}
+
+button{
+background:#111;
+color:white;
+border-radius:6px;
+border:none;
+width:38px;
+height:38px;
+font-size:18px;
+cursor:pointer;
+}
+
+
+/* item name */
+
+#name{
+font-size:20px;
+font-weight:600;
+color:black;
+}
+
+/* description */
+
+#desc{
+margin-top:8px;
+font-size:22px;
+font-weight:700;
+line-height:1.4;
+color:black;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+  <img class="headerLogo" src="Screenshot (345).png">
+
+
+</div>
+
+<model-viewer
+id="viewer"
+src="cheesebl.glb"
+poster="cheese.png"
+reveal="interaction"
+ar
+ar-modes="scene-viewer webxr quick-look"
+ar-placement="floor"
+shadow-intensity="1"
+environment-image="neutral"
+scale="0.35 0.35 0.35">
+</model-viewer>
+
+
+<div class="menu">
+
+<div class="nav">
+<button id="prev">&lt;</button>
+<div id="name">Cheesecake</div>
+<button id="next">&gt;</button>
+</div>
+
+
+<div id="desc">
+A classic baked cheesecake with a smooth, creamy texture
+</div>
+
+</div>
+
+<script>
+
+let current=0
+let startX=0
+let endX=0
+
+const models=[
+"cheesebl.glb",
+"chocosambl.glb",
+"redvelvet2mb.glb",
+"vanillay.glb",
+"rainbl.glb"
+]
+
+const names=[
+"Cheesecake",
+"Dark Choco Mousse Pastry",
+"Red Velvet Pastry",
+"Strawberry Vanilla Delight",
+"Rainbow Pastry"
+]
+
+const descriptions=[
+"A classic baked cheesecake with a rich, smooth cream filling and a delicate baked texture",
+"A decadent dark chocolate pastry with layers of Dutch cocoa mousse, finished with a glossy chocolate glaze",
+"A layered red velvet pastry with a smooth cream filling and soft velvety crumb",
+"A soft vanilla pastry layered with silky strawberry cream and finished with a light, creamy frosting",
+"A colorful layered pastry with soft vanilla sponge and finished with smooth, creamy frosting"
+]
+
+const posters=[
+"cheese.png",
+"moouse.png",
+"redvelvet.png",
+"vanilla.png",
+"rainbow.png"
+]
+
+const viewer=document.getElementById("viewer")
+function updateItem(){
+
+viewer.src=models[current]
+viewer.poster=posters[current]
+
+document.getElementById("name").innerText=names[current]
+document.getElementById("desc").innerText=descriptions[current]
+
+}
+  
+
+
+function nextItem(){
+
+current=(current+1)%models.length
+
+updateItem()
+
+}
+
+function prevItem(){
+
+current=(current-1+models.length)%models.length
+
+updateItem()
+
+}
+
+document.getElementById("next").onclick=nextItem
+document.getElementById("prev").onclick=prevItem
+
+  
+const dropdown = document.querySelector(".dessertDropdown")
+
+dropdown.addEventListener("change", function(){
+
+current = this.selectedIndex - 1
+
+if(current >= 0){
+updateItem()
+}
+
+})
+
+/* swipe support */
+
+viewer.addEventListener("touchstart",(e)=>{
+startX=e.touches[0].clientX
+})
+
+viewer.addEventListener("touchend",(e)=>{
+endX=e.changedTouches[0].clientX
+
+if(startX-endX>50){
+nextItem()
+}
+
+if(endX-startX>50){
+prevItem()
+}
+
+})
+
+</script>
+
+</body>
+</html>
